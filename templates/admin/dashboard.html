@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+<p class="subtitle">Overview of compliance activity</p>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="num">{{ total_employees }}</div><div class="label">Employees</div></div>
+  <div class="stat-card"><div class="num">{{ total_tasks }}</div><div class="label">Total Tasks</div></div>
+  <div class="stat-card"><div class="num">{{ pending_review }}</div><div class="label">Awaiting Review</div></div>
+  <div class="stat-card"><div class="num">{{ overdue }}</div><div class="label">Overdue</div></div>
+</div>
+
+<div class="toolbar">
+  <h2>Quick Actions</h2>
+</div>
+<div style="display:flex; gap:10px; margin-bottom: 30px;">
+  <a href="{{ url_for('admin.add_employee') }}" class="btn">+ Add Employee</a>
+  <a href="{{ url_for('admin.add_task') }}" class="btn btn-secondary">+ Assign Task</a>
+  <a href="{{ url_for('admin.tasks', status='Submitted') }}" class="btn btn-success">Review Submissions</a>
+</div>
+
+<div class="card">
+  <h2>Recent Activity</h2>
+  {% if recent_logs %}
+  <table>
+    <thead><tr><th>When</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for log in recent_logs %}
+      <tr>
+        <td>{{ log.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>{{ log.action }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No activity yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

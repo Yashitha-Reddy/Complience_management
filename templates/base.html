@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Compliance Manager{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Compliance Manager</div>
+    {% if current_user.is_authenticated %}
+    <nav class="nav">
+      {% if current_user.is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin.employees') }}">Employees</a>
+        <a href="{{ url_for('admin.tasks') }}">Tasks</a>
+        <a href="{{ url_for('admin.activity_log') }}">Activity Log</a>
+      {% else %}
+        <a href="{{ url_for('employee.dashboard') }}">My Tasks</a>
+      {% endif %}
+      <span class="user-chip">{{ current_user.full_name }} ({{ current_user.role }})</span>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+    </nav>
+    {% endif %}
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

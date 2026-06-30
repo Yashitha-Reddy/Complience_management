@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Assign Task{% endblock %}
+{% block content %}
+<h1>Assign Compliance Task</h1>
+<div class="card" style="max-width: 560px;">
+  <form method="POST">
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" name="title" required>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Assign To</label>
+      <select name="assigned_to" required>
+        <option value="" disabled selected>Select employee</option>
+        {% for emp in employees %}
+        <option value="{{ emp.id }}">{{ emp.full_name }} — {{ emp.department }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Priority</label>
+      <select name="priority" required>
+        <option value="High">High</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Frequency</label>
+      <select name="frequency" required>
+        <option value="One Time" selected>One Time</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Quarterly">Quarterly</option>
+        <option value="Yearly">Yearly</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Due Date</label>
+      <input type="date" name="due_date" required>
+    </div>
+    <button type="submit" class="btn">Create Task</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}My Tasks{% endblock %}
+{% block content %}
+<h1>My Compliance Tasks</h1>
+<p class="subtitle">Tasks assigned to you</p>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="num">{{ counts.get('Pending', 0) }}</div><div class="label">Pending</div></div>
+  <div class="stat-card"><div class="num">{{ counts.get('Submitted', 0) }}</div><div class="label">Awaiting Review</div></div>
+  <div class="stat-card"><div class="num">{{ counts.get('Completed', 0) }}</div><div class="label">Completed</div></div>
+  <div class="stat-card"><div class="num">{{ counts.get('Rejected', 0) }}</div><div class="label">Reverted</div></div>
+</div>
+
+<div class="card">
+  {% if tasks %}
+  <table>
+    <thead><tr><th>Title</th><th>Priority</th><th>Due Date</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td><span class="priority-{{ task.priority }}">{{ task.priority }}</span></td>
+        <td>{{ task.due_date.strftime('%d %b %Y') if task.due_date else '—' }}</td>
+        <td><span class="badge badge-{{ task.status.replace(' ', '-') }}">{{ task.status }}</span></td>
+        <td><a href="{{ url_for('employee.task_detail', task_id=task.id) }}" class="btn btn-sm">Open</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No tasks assigned to you yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

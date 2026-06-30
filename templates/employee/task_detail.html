@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <h1>{{ task.title }}</h1>
+  <span class="badge badge-{{ task.status.replace(' ', '-') }}">{{ task.status }}</span>
+</div>
+
+<div class="card">
+  <p><strong>Priority:</strong> <span class="priority-{{ task.priority }}">{{ task.priority }}</span></p>
+  <p><strong>Frequency:</strong> {{ task.frequency }}</p>
+  <p><strong>Due Date:</strong> {{ task.due_date.strftime('%d %b %Y') if task.due_date else '—' }}</p>
+  {% if task.description %}<p><strong>Description:</strong> {{ task.description }}</p>{% endif %}
+
+  {% if task.status == 'Rejected' and task.review_note %}
+  <div class="flash flash-danger">
+    <strong>Reverted by admin:</strong> {{ task.review_note }}
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Uploaded Documents</h2>
+  {% if documents %}
+  <table>
+    <thead><tr><th>File</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr>
+        <td>{{ doc.filename }}</td>
+        <td>{{ doc.uploaded_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td><a href="{{ url_for('employee.download_document', document_id=doc.id) }}" class="btn btn-sm">Download</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No documents uploaded yet.</p>
+  {% endif %}
+</div>
+
+{% if task.status != 'Completed' %}
+<div class="card">
+  <h2>Upload Document</h2>
+  <form method="POST" action="{{ url_for('employee.upload_document', task_id=task.id) }}" enctype="multipart/form-data">
+    <div class="form-group">
+      <input type="file" name="document" required>
+    </div>
+    <button type="submit" class="btn">Submit for Review</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

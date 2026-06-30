@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Activity Log{% endblock %}
+{% block content %}
+<h1>Activity Log</h1>
+<div class="card">
+  {% if logs %}
+  <table>
+    <thead><tr><th>When</th><th>User</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>{{ log.user.full_name if log.user else '—' }}</td>
+        <td>{{ log.action }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No activity recorded.</p>
+  {% endif %}
+</div>
+{% endblock %}

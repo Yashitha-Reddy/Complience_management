@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <h1>{{ task.title }}</h1>
+  <span class="badge badge-{{ task.status.replace(' ', '-') }}">{{ task.status }}</span>
+</div>
+
+<div class="card">
+  <p><strong>Assigned to:</strong> {{ task.assignee.full_name if task.assignee else '—' }} ({{ task.assignee.department if task.assignee else '' }})</p>
+  <p><strong>Priority:</strong> <span class="priority-{{ task.priority }}">{{ task.priority }}</span></p>
+  <p><strong>Frequency:</strong> {{ task.frequency }}</p>
+  <p><strong>Due Date:</strong> {{ task.due_date.strftime('%d %b %Y') if task.due_date else '—' }}</p>
+  {% if task.description %}<p><strong>Description:</strong> {{ task.description }}</p>{% endif %}
+  {% if task.review_note %}<p><strong>Last Review Note:</strong> {{ task.review_note }}</p>{% endif %}
+</div>
+
+<div class="card">
+  <h2>Submitted Documents</h2>
+  {% if documents %}
+  <table>
+    <thead><tr><th>File</th><th>Uploaded</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr>
+        <td>{{ doc.filename }}</td>
+        <td>{{ doc.uploaded_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td><a href="{{ url_for('admin.download_document', document_id=doc.id) }}" class="btn btn-sm">Download</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No documents uploaded yet.</p>
+  {% endif %}
+</div>
+
+{% if task.status == 'Submitted' %}
+<div class="card">
+  <h2>Review Submission</h2>
+  <form method="POST" action="{{ url_for('admin.review_task', task_id=task.id) }}">
+    <div class="form-group">
+      <label>Review Note (optional)</label>
+      <textarea name="review_note" placeholder="Add a comment for the employee..."></textarea>
+    </div>
+    <div style="display:flex; gap: 10px;">
+      <button type="submit" name="decision" value="approve" class="btn btn-success">Approve & Complete</button>
+      <button type="submit" name="decision" value="reject" class="btn btn-danger">Revert to Employee</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

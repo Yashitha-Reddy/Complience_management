@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <h1>Employees</h1>
+  <a href="{{ url_for('admin.add_employee') }}" class="btn">+ Add Employee</a>
+</div>
+
+<div class="card">
+  {% if employees %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Department</th><th>Status</th><th>Joined</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.full_name }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.department }}</td>
+        <td>
+          {% if emp.is_active_flag %}
+            <span class="badge badge-Completed">Active</span>
+          {% else %}
+            <span class="badge badge-Rejected">Disabled</span>
+          {% endif %}
+        </td>
+        <td>{{ emp.created_at.strftime('%d %b %Y') }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.toggle_employee_active', user_id=emp.id) }}">
+            <button type="submit" class="btn btn-sm {{ 'btn-danger' if emp.is_active_flag else 'btn-success' }}">
+              {{ 'Disable' if emp.is_active_flag else 'Enable' }}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty-state">No employees added yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
